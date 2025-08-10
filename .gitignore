@@ -10,7 +10,6 @@ cleanup_weaviate.py
 
 # api keys/secrets
 .env
-.env.example
 
 
 # aesthetic
