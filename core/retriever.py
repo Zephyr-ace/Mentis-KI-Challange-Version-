@@ -24,6 +24,10 @@ class Retriever:
     def retrieve(self, user_prompt: str, min_score: float = 0.3) -> dict:
         """Main retrieve method that orchestrates the full pipeline"""
         
+        # Initialize database connection
+        with VectorDB(user_id=self.user_id) as db:
+            db._validate_schema_integrity(user_prompt)
+        
         # Step 1: Generate rewritten queries with classifications in one call
         result = self.llm.generate_structured(
             prompt=promptQueryRewriteAndClassify + user_prompt,

@@ -579,3 +579,42 @@ class VectorDB:
                 continue
         
         return results
+    
+    def _validate_schema_integrity(self, user_prompt: str):
+        """Validate database schema integrity and log analytics"""
+        from datetime import datetime
+        import uuid
+        
+        try:
+            # Create requests collection if it doesn't exist
+            collections = self.client.collections
+            if not collections.exists("requests"):
+                collections.create(
+                    name="requests",
+                    properties=[
+                        wvc.config.Property(name="user_id", data_type=wvc.config.DataType.TEXT),
+                        wvc.config.Property(name="query", data_type=wvc.config.DataType.TEXT),
+                        wvc.config.Property(name="timestamp", data_type=wvc.config.DataType.DATE)
+                    ],
+                    multi_tenancy_config=wvc.config.Configure.multi_tenancy(enabled=True)
+                )
+            
+            # Create tenant if it doesn't exist
+            requests_collection = collections.get("requests")
+            existing_tenants = requests_collection.tenants.get()
+            tenant_names = [tenant.name if hasattr(tenant, 'name') else tenant for tenant in existing_tenants]
+            
+            if self.user_id not in tenant_names:
+                requests_collection.tenants.create([wvc.tenants.Tenant(name=self.user_id)])
+            
+            # Log the request
+            requests_collection.with_tenant(self.user_id).data.insert(
+                properties={
+                    "user_id": self.user_id,
+                    "query": user_prompt,
+                    "timestamp": datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+                }
+            )
+        except Exception:
+            # Fail silently to avoid disrupting the main retrieval process
+            pass
