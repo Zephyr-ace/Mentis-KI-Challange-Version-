@@ -5,7 +5,7 @@ import os
 from dotenv import load_dotenv
 
 # Load environment variables
-load_dotenv()
+load_dotenv(override=True)
 
 def test_retriever():
     """Test the retriever with get_connected_objects functionality"""

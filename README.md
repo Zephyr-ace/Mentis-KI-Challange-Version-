@@ -1,25 +1,80 @@
-# Digital Memory - KI Challenge
+# Mentis - KI Challenge
 
-A personal knowledge retrieval system built for the KI Challenge, implementing RAG (Retrieval-Augmented Generation) to create a digital memory.
+Digital Memory: A personal knowledge retrieval system built for the KI Challenge, implementing RAG (Retrieval-Augmented Generation) to create a digital memory.
 
 ## Quick Start
 
 ```bash
 make install
-make eval
+make chat
 ```
+
+## Setup
+
+### 1. Environment Configuration
+
+Copy the example environment file and configure your API keys:
+
+```bash
+cp .env.exampe .env
+```
+
+Edit `.env` with your API keys:
+- `OPENAI_API_KEY`: Your OpenAI API key
+- `WEAVIATE_URL` and `WEAVIATE_API_KEY`: Provided via email to Fiona Koenz
+
+### 2. Install Dependencies
+
+```bash
+make install
+```
+
+## Usage
+
+### Available Commands
+
+- `make install` - Install project dependencies
+- `make eval` - Run retrieval evaluation
+- `make chat` - Start chat interface with all 3 retrievers
+- `make mentis` - Start Mentis chat interface (main retriever only)
+- `make encode-rags` - Encode data for SimpleRag and SummaryRag
+- `make encode-main` - Encode data using main encoder
+- `make clean` - Clean temporary files
+
+### Chat Interfaces
+
+**Standard Chat (All Retrievers)**:
+```bash
+make chat
+```
+Launches the full chat interface with access to all three retrieval systems.
+
+**Mentis Chat (Main Retriever Only)**:
+```bash
+make mentis
+```
+Launches a focused chat interface using only the main retriever system.
+
+## Requirements
+
+- Python 3.12+
+- OpenAI API access
+- Weaviate database access
+
+### Dependencies
+
+- `openai` - OpenAI API client
+- `pydantic` - Data validation
+- `weaviate-client` - Vector database client
+- `ragas` - Evaluation framework
 
 ## Features
 
 - Vector-based knowledge retrieval
 - Summary-based retrieval system  
 - Automated evaluation using LLM assessment
-
-## Requirements
-
-- Python 3.12+
-- OpenAI API access
+- Multiple chat interfaces for different use cases
 
 ## Important Note for KI Challenge Evaluators
 
-⚠️ **Weaviate API Key Notice**: The Weaviate API key used in this project may expire in a few days. If you encounter authentication errors when running the evaluation, this is likely due to key expiration. Please contact the project author for an updated key if needed.
+⚠️ **API Keys Notice**: The Weaviate API keys required for this project have been sent to Fiona Koenz via email. If you encounter authentication errors when running the evaluation, please use the provided keys or contact me (Levin) for assistance.

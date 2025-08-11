@@ -1,15 +1,11 @@
 from core.retriever import Retriever
-from rag.simple_rag import SimpleRag
-from rag.summaryRag import SummaryRag
 from core.llm import LLM_OA
-from config.prompts import finalGenerationPrompt, simpleRagPrompt, summaryRagPrompt, mentisPrompt
+from config.prompts import mentisPrompt
 
 
-class Chat:
+class MentisChat:
     def __init__(self):
         self.retriever = Retriever()
-        self.simple_rag = SimpleRag()
-        self.summary_rag = SummaryRag()
         self.llm = LLM_OA("o3")
     
     def __enter__(self):
@@ -18,26 +14,18 @@ class Chat:
     def __exit__(self, exc_type, exc_val, exc_tb):
         pass
     
-    def chat(self, user_query: str) -> dict[str, str]:
-        """Generate 3 different answers using 3 different retrievers"""
+    def chat(self, user_query: str) -> str:
+        """Generate answer using only the main retriever (Mentis)"""
         
-        # 1. Retrieve from all 3 sources
+        # 1. Retrieve from main retriever only
         main_retrieval_output = self.retriever.retrieve(user_query)
         main_results = main_retrieval_output.get("results", {}) if isinstance(main_retrieval_output, dict) else main_retrieval_output
-        simple_results = self.simple_rag.retrieve(user_query, limit=5)
-        summary_results = self.summary_rag.retrieve(user_query, limit=5)
         
-        # 2. Format each result set
+        # 2. Format results
         main_context = self._format_main_results(main_results)
-        simple_context = self._format_simple_results(simple_results)
-        summary_context = self._format_summary_results(summary_results)
         
-        # 3. Generate 3 separate answers with specific prompts
-        return {
-            "main_retriever": self._generate_answer(user_query, main_context, mentisPrompt),
-            "simple_rag": self._generate_answer(user_query, simple_context, simpleRagPrompt),
-            "summary_rag": self._generate_answer(user_query, summary_context, summaryRagPrompt)
-        }
+        # 3. Generate answer with Mentis prompt
+        return self._generate_answer(user_query, main_context)
     
     def _format_main_results(self, results: dict[str, list]) -> str:
         """Format results from main retriever (structured objects by category)"""
@@ -64,31 +52,9 @@ class Chat:
         
         return "\n".join(formatted_parts) if formatted_parts else "No relevant information found."
     
-    def _format_simple_results(self, results: list[str]) -> str:
-        """Format results from simple RAG (list of text chunks)"""
-        if not results:
-            return "No relevant information found."
-        
-        formatted_parts = ["--- Simple RAG Chunks ---"]
-        for i, chunk in enumerate(results, 1):
-            formatted_parts.append(f"Chunk {i}: {chunk}")
-        
-        return "\n".join(formatted_parts)
-    
-    def _format_summary_results(self, results: list[str]) -> str:
-        """Format results from summary RAG (list of summary texts)"""
-        if not results:
-            return "No relevant information found."
-        
-        formatted_parts = ["--- Summary Information ---"]
-        for i, summary in enumerate(results, 1):
-            formatted_parts.append(f"Summary {i}: {summary}")
-        
-        return "\n".join(formatted_parts)
-    
-    def _generate_answer(self, user_query: str, context: str, system_prompt: str) -> str:
-        """Generate answer using LLM with retrieved context and specific system prompt"""
-        prompt = f"""{system_prompt}
+    def _generate_answer(self, user_query: str, context: str) -> str:
+        """Generate answer using LLM with retrieved context and Mentis prompt"""
+        prompt = f"""{mentisPrompt}
 
 User Question: {user_query}
 

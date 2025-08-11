@@ -3,7 +3,7 @@
 import warnings
 warnings.filterwarnings("ignore")
 
-from core.chat import Chat
+from core.mentis_chat import MentisChat
 import os
 from dotenv import load_dotenv
 
@@ -20,50 +20,38 @@ def main():
         print("L OPENAI_API_KEY environment variable is required")
         return
     
-    print("> Chat system initialized with 3 retrievers!")
+    print("> Mentis initialized - Advanced semantic diary analysis!")
     print("Type 'quit' to exit\n")
     
-    # Initialize chat system
-    with Chat() as chat:
+    # Initialize Mentis chat system
+    with MentisChat() as mentis:
         while True:
             try:
                 # Get user input
-                user_query = input("=Ask me anything about your diary: ").strip()
+                user_query = input("=Ask Mentis about your diary: ").strip()
                 
                 if user_query.lower() in ['quit', 'exit', 'q']:
-                    print("=K Goodbye!")
+                    print("=K Goodbye from Mentis!")
                     break
                 
                 if not user_query:
                     print("Please enter a question.")
                     continue
                 
-                print("\n= Searching across all retrievers...")
+                print("\n= Mentis is analyzing your semantic knowledge graph...")
                 
-                # Get responses from all 3 retrievers
-                responses = chat.chat(user_query)
+                # Get response from Mentis
+                response = mentis.chat(user_query)
                 
-                # Display results
+                # Display result
                 print("\n" + "="*80)
-                print("=� RESULTS FROM 3 DIFFERENT RETRIEVERS")
+                print("=🧠 MENTIS RESPONSE")
                 print("="*80)
-                
-                print(f"\n<� MAIN RETRIEVER (Semantic Search):")
-                print("-" * 50)
-                print(responses["main_retriever"])
-                
-                print(f"\n=� SIMPLE RAG (Text Chunks):")
-                print("-" * 50)
-                print(responses["simple_rag"])
-                
-                print(f"\n=� SUMMARY RAG (Summarized Content):")
-                print("-" * 50)
-                print(responses["summary_rag"])
-                
+                print(response)
                 print("\n" + "="*80 + "\n")
                 
             except KeyboardInterrupt:
-                print("\n=K Goodbye!")
+                print("\n=K Goodbye from Mentis!")
                 break
             except Exception as e:
                 print(f"L Error: {e}")

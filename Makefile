@@ -1,6 +1,6 @@
 # Makefile for Mentis project
 
-.PHONY: help install eval clean encode-rags encode-main chat
+.PHONY: help install eval clean encode-rags encode-main chat mentis
 
 # Default target
 help:
@@ -9,7 +9,8 @@ help:
 	@echo "  eval        - Run retrieval evaluation"
 	@echo "  encode-rags - Encode data for SimpleRag and SummaryRag"
 	@echo "  encode-main - Encode data using main encoder"
-	@echo "  chat        - Start chat interface"
+	@echo "  chat        - Start chat interface with all 3 retrievers"
+	@echo "  mentis      - Start Mentis chat interface (main retriever only)"
 	@echo "  clean       - Clean temporary files"
 
 # Install dependencies
@@ -28,9 +29,13 @@ encode-rags:
 encode-main:
 	python -c "from core.encoder import Encoder; Encoder().encode(open('data/diary.txt').read())"
 
-# Start chat interface
+# Start chat interface with all 3 retrievers
 chat:
 	python main.py
+
+# Start Mentis chat interface (main retriever only)
+mentis:
+	python mentis_main.py
 
 # Clean temporary files
 clean:
