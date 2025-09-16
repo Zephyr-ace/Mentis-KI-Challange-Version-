@@ -1,4 +1,4 @@
-Mentis — KI (AI) Challenge
+# Mentis — KI (AI) Challenge
 Digital memory: a personal knowledge retrieval system using Retrieval-Augmented Generation (RAG).
 Note: This is the public version of the Mentis backend. The private development history has been omitted; release snapshots are published here.
 ## Quick Start
